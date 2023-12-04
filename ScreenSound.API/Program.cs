@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -19,7 +20,8 @@ builder.Services.AddDbContext<ScreenSoundContext>((options) => {
 
 builder.Services
     .AddIdentity<PessoaComAcesso, PerfilDeAcesso>()
-    .AddEntityFrameworkStores<ScreenSoundContext>();
+    .AddEntityFrameworkStores<ScreenSoundContext>()
+    .AddApiEndpoints();
 
 builder.Services.AddTransient<DAL<Artista>>();
 builder.Services.AddTransient<DAL<Musica>>();
@@ -47,6 +49,8 @@ app.UseStaticFiles();
 app.AddEndPointsArtistas();
 app.AddEndPointsMusicas();
 app.AddEndPointGeneros();
+
+app.MapGroup("/auth").MapIdentityApi<PessoaComAcesso>().WithTags("Autenticação");
 
 app.UseSwagger();
 app.UseSwaggerUI();
