@@ -21,7 +21,7 @@ public static class ArtistasExtensions
             }
             var listaDeArtistaResponse = EntityListToResponseList(listaDeArtistas);
             return Results.Ok(listaDeArtistaResponse);
-        });
+        }).RequireAuthorization();
 
         app.MapGet("/Artistas/{nome}", ([FromServices] DAL<Artista> dal, string nome) =>
         {

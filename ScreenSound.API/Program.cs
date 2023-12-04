@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ScreenSound.API.Endpoints;
 using ScreenSound.Banco;
@@ -18,10 +19,12 @@ builder.Services.AddDbContext<ScreenSoundContext>((options) => {
             .UseLazyLoadingProxies();
 });
 
+builder.Services.AddAuthorization();
+
 builder.Services
-    .AddIdentity<PessoaComAcesso, PerfilDeAcesso>()
-    .AddEntityFrameworkStores<ScreenSoundContext>()
-    .AddApiEndpoints();
+    .AddIdentityApiEndpoints<PessoaComAcesso>()
+    .AddEntityFrameworkStores<ScreenSoundContext>();
+
 
 builder.Services.AddTransient<DAL<Artista>>();
 builder.Services.AddTransient<DAL<Musica>>();
