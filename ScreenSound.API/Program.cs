@@ -19,9 +19,8 @@ builder.Services.AddDbContext<ScreenSoundContext>((options) => {
 });
 
 builder.Services
-    .AddIdentity<PessoaComAcesso, PerfilDeAcesso>()
-    .AddEntityFrameworkStores<ScreenSoundContext>()
-    .AddApiEndpoints();
+    .AddIdentityApiEndpoints<PessoaComAcesso>()
+    .AddEntityFrameworkStores<ScreenSoundContext>();
 
 builder.Services.AddTransient<DAL<Artista>>();
 builder.Services.AddTransient<DAL<Musica>>();
