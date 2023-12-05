@@ -1,0 +1,19 @@
+﻿@page "/logout"
+
+<PageTitle>Logout</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <MudProgressCircular Indeterminate="true" Color="Color.Secondary"/>
+    </Authorized>
+    <NotAuthorized>
+        <MudText Typo="Typo.body1" Color="Color.Secondary">Você foi desconectado.</MudText>
+        <MudButton Color="Color.Secondary" Variant="Variant.Outlined" Href="login">
+            Login
+        </MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}
