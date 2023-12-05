@@ -7,6 +7,15 @@
 <MudLayout>
     <MudAppBar Color="Color.Surface" Fixed="true" Elevation="2">
         <MudImage Src="images/screensound-logo.png"></MudImage>
+        <MudSpacer />
+        <AuthorizeView>
+            <Authorized>
+                @context.User.Identity?.Name
+            </Authorized>
+            <NotAuthorized>
+                <MudButton Variant="Variant.Outlined" Color="Color.Warning" Href="login">Login</MudButton>
+            </NotAuthorized>
+        </AuthorizeView>
     </MudAppBar>
     <MudDrawer Open="true" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu></NavMenu>

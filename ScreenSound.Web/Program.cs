@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -10,18 +11,20 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddMudServices();
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+// serviços necessários para autenticação/autorização
+builder.Services.AddAuthorizationCore();
+builder.Services.AddTransient<CookieHandler>();
+builder.Services.AddTransient<AuthenticationStateProvider, AuthenticationService>();
 
+// serviços que consomem a API do Screensound
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
 builder.Services.AddTransient<ArtistaAPI>();
-
 builder.Services.AddTransient<MusicaAPI>();
 
 builder.Services.AddHttpClient("API",client => {
     client.BaseAddress = new Uri(builder.Configuration["APIServer:Url"]!);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
-});
-
-builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+}).AddHttpMessageHandler<CookieHandler>();
 
 
 await builder.Build().RunAsync();

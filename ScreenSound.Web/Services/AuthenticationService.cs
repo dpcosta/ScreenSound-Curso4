@@ -26,8 +26,9 @@ public class AuthenticationService(IHttpClientFactory factory) : AuthenticationS
                     new(ClaimTypes.Name, info.Email!),
                     new(ClaimTypes.Email, info.Email!)
                 ];
+                var id = new ClaimsIdentity(direitos, nameof(AuthenticationService));
+                usuario = new ClaimsPrincipal(id);
                 autenticado = true;
-                usuario = new ClaimsPrincipal(new ClaimsIdentity(direitos));
             }
         }
 
