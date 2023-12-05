@@ -10,45 +10,65 @@ public class AuthenticationService(IHttpClientFactory factory) : AuthenticationS
     private readonly HttpClient httpClient = factory.CreateClient("API");
     private bool autenticado = false;
 
+    public async Task<bool> CheckAuthenticatedAsync()
+    {
+        await GetAuthenticationStateAsync();
+        return autenticado;
+    }
+
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         autenticado = false;
         ClaimsPrincipal usuario = new(new ClaimsIdentity());
-        var resposta = await httpClient.GetAsync("auth/manage/info");
 
-        if (resposta.IsSuccessStatusCode)
+        try
         {
-            var info = await resposta.Content.ReadFromJsonAsync<InfoPessoaUsuaria>();
-            if (info is not null)
+            var resposta = await httpClient.GetAsync("auth/manage/info");
+            if (resposta.IsSuccessStatusCode)
             {
-                List<Claim> direitos = 
-                [
-                    new(ClaimTypes.Name, info.Email!),
-                    new(ClaimTypes.Email, info.Email!)
-                ];
-                var id = new ClaimsIdentity(direitos, nameof(AuthenticationService));
-                usuario = new ClaimsPrincipal(id);
-                autenticado = true;
+                var info = await resposta.Content.ReadFromJsonAsync<InfoPessoaUsuaria>();
+                if (info is not null)
+                {
+                    List<Claim> direitos =
+                    [
+                        new(ClaimTypes.Name, info.Email!),
+                        new(ClaimTypes.Email, info.Email!)
+                    ];
+                    var id = new ClaimsIdentity(direitos, nameof(AuthenticationService));
+                    usuario = new ClaimsPrincipal(id);
+                    autenticado = true;
+                }
             }
         }
+        catch { }
 
         return new AuthenticationState(usuario);
     }
 
     public async Task<AuthResponse> LoginAsync(string email, string senha)
     {
-        var response = await httpClient.PostAsJsonAsync("auth/login?useCookies=true", new
+        try
         {
-            email,
-            password = senha
-        });
+            var response = await httpClient.PostAsJsonAsync("auth/login?useCookies=true", new
+            {
+                email,
+                password = senha
+            });
 
-        if (response.IsSuccessStatusCode)
-        {
-            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-            return new AuthResponse { Sucesso = true };
+            if (response.IsSuccessStatusCode)
+            {
+                NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+                return new AuthResponse { Sucesso = true };
+            }
         }
+        catch { }
 
-        return new AuthResponse { Erros = ["Login/senha inválidos!"] };
+        return new AuthResponse { Sucesso = false, Erros = ["Login/senha inválidos!"] };
+    }
+
+    public async Task LogoutAsync()
+    {
+        await httpClient.PostAsync("auth/logout", null);
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
 }

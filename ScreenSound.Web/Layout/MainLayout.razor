@@ -11,6 +11,7 @@
         <AuthorizeView>
             <Authorized>
                 @context.User.Identity?.Name
+                <MudButton Size="Size.Small" Href="logout" Variant="Variant.Text" Color="Color.Default">Logout</MudButton>
             </Authorized>
             <NotAuthorized>
                 <MudButton Variant="Variant.Outlined" Color="Color.Warning" Href="login">Login</MudButton>
@@ -26,6 +27,7 @@
 </MudLayout>
 
 @code {
+
     private MudTheme currentTheme = new MudTheme()
     {
         Palette = ScreendsoundPallete.CreatePallete

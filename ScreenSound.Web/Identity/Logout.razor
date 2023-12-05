@@ -1,8 +1,9 @@
 ﻿@page "/logout"
+@inject IAuthenticationService AuthService
 
 <PageTitle>Logout</PageTitle>
 
-<AuthorizeView>
+<AuthorizeView @ref="authView">
     <Authorized>
         <MudProgressCircular Indeterminate="true" Color="Color.Secondary"/>
     </Authorized>
@@ -15,5 +16,15 @@
 </AuthorizeView>
 
 @code {
+    private AuthorizeView? authView;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (await AuthService.CheckAuthenticatedAsync())
+        {
+            await AuthService.LogoutAsync();
+        }
+        await base.OnInitializedAsync();
+    }
 
 }

@@ -6,4 +6,6 @@ namespace ScreenSound.Web.Services;
 public interface IAuthenticationService
 {
     Task<AuthResponse> LoginAsync(string email, string senha);
+    Task<bool> CheckAuthenticatedAsync();
+    Task LogoutAsync();
 }
