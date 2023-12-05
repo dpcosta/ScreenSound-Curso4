@@ -1,0 +1,80 @@
+﻿@page "/login"
+@inject IAuthenticationService AuthService
+
+<PageTitle>Login - Screensound</PageTitle>
+
+<MudPaper Class="px-8 pt-2 pb-4 mx-16 my-8" Justify="Justify.Center">
+
+    <MudText Class="mt-8" Typo="Typo.h4">Login</MudText>
+
+    @if(errors)
+    {
+        foreach(var erro in errorList)
+        {
+            <MudText Typo="Typo.body1" Color="Color.Error">@erro</MudText>
+        }
+    }
+
+    <MudForm @ref="form" @bind-IsValid="success" @bind-Errors="errorList">
+
+        <MudTextField T="string" Label="Email" @bind-Value="email"
+                      Variant="Variant.Outlined" Class="my-4"
+                      Required="true" RequiredError="Email obrigatório!"
+                      OnlyValidateIfDirty="true" />
+
+        <MudTextField T="string" Label="Senha" @bind-Value="senha"
+                      InputType="InputType.Password"
+                      Variant="Variant.Outlined" Class="my-4"
+                      Required="true" RequiredError="Senha obrigatória!"
+                      OnlyValidateIfDirty="true" />
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   Class="my-6" @onclick="FazerLogin"
+                   Disabled="@(!success)">Login</MudButton>
+
+    </MudForm>
+</MudPaper>
+
+
+
+@code {
+    private string? email;
+    private string? senha;
+
+    private bool errors;
+    private bool success;
+
+    private string[] errorList;
+    MudForm form;
+
+    private async Task FazerLogin()
+    {
+        success = false;
+        errorList = [];
+
+        if (string.IsNullOrEmpty(email))
+        {
+            errorList = ["Email é obrigatório"];
+            return;
+        }
+
+        if (string.IsNullOrEmpty(senha))
+        {
+            errorList = ["Senha é obrigatória"];
+            return;
+        }
+
+        var response = await AuthService.LoginAsync(email, senha);
+
+        if (response.Sucesso)
+        {
+            success = true;
+            errorList = [];
+            email = senha = string.Empty;
+        } else
+        {
+            errors = true;
+            errorList = response.Erros;
+        }
+    }
+}

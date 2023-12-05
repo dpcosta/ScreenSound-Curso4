@@ -21,5 +21,7 @@ builder.Services.AddHttpClient("API",client => {
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
+builder.Services.AddTransient<IAuthenticationService, AuthenticationService>();
+
 
 await builder.Build().RunAsync();
