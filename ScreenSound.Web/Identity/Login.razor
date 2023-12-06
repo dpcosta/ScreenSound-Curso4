@@ -1,6 +1,7 @@
 ﻿@page "/login"
 @attribute [AllowAnonymous]
 @inject IAuthenticationService AuthService
+@inject NavigationManager Navigation
 
 <PageTitle>Login - Screensound</PageTitle>
 
@@ -39,6 +40,9 @@
 
 
 @code {
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
     private string? email;
     private string? senha;
 
@@ -47,6 +51,21 @@
 
     private string[] errorList;
     MudForm form;
+
+    public void RedirectTo(string? uri)
+    {
+        uri ??= "";
+
+        // Prevent open redirects.
+        if (!Uri.IsWellFormedUriString(uri, UriKind.Relative))
+        {
+            uri = Navigation.ToBaseRelativePath(uri);
+        }
+
+        // During static rendering, NavigateTo throws a NavigationException which is handled by the framework as a redirect.
+        // So as long as this is called from a statically rendered Identity component, the InvalidOperationException is never thrown.
+        Navigation.NavigateTo(uri);
+    }
 
     private async Task FazerLogin()
     {
@@ -72,6 +91,7 @@
             success = true;
             errorList = [];
             email = senha = string.Empty;
+            if (ReturnUrl is not null) RedirectTo(ReturnUrl);
         } else
         {
             errors = true;
