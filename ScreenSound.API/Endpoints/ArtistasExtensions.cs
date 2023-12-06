@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
 using ScreenSound.API.Requests;
 using ScreenSound.API.Response;
 using ScreenSound.Banco;
@@ -42,9 +43,9 @@ public static class ArtistasExtensions
 
         });
 
-        groupBuilder.MapPost("", async ([FromServices]IHostEnvironment env,[FromServices] DAL<Artista> dal, [FromBody] ArtistaRequest artistaRequest) =>
+        groupBuilder.MapPost("", async ([FromServices] IHostEnvironment env, [FromServices] DAL<Artista> dal, [FromBody] ArtistaRequest artistaRequest) =>
         {
-            
+
             var nome = artistaRequest.nome.Trim();
             var imagemArtista = DateTime.Now.ToString("ddMMyyyyhhss") + "." + nome + ".jpg";
 
@@ -61,7 +62,8 @@ public static class ArtistasExtensions
             return Results.Ok();
         });
 
-        groupBuilder.MapDelete("{id}", ([FromServices] DAL<Artista> dal, int id) => {
+        groupBuilder.MapDelete("{id}", ([FromServices] DAL<Artista> dal, int id) =>
+        {
             var artista = dal.RecuperarPor(a => a.Id == id);
             if (artista is null)
             {
@@ -72,14 +74,15 @@ public static class ArtistasExtensions
 
         });
 
-        groupBuilder.MapPut("", ([FromServices] DAL<Artista> dal, [FromBody] ArtistaRequestEdit artistaRequestEdit) => {
+        groupBuilder.MapPut("", ([FromServices] DAL<Artista> dal, [FromBody] ArtistaRequestEdit artistaRequestEdit) =>
+        {
             var artistaAAtualizar = dal.RecuperarPor(a => a.Id == artistaRequestEdit.Id);
             if (artistaAAtualizar is null)
             {
                 return Results.NotFound();
             }
             artistaAAtualizar.Nome = artistaRequestEdit.nome;
-            artistaAAtualizar.Bio = artistaRequestEdit.bio;        
+            artistaAAtualizar.Bio = artistaRequestEdit.bio;
             dal.Atualizar(artistaAAtualizar);
             return Results.Ok();
         });
@@ -102,9 +105,38 @@ public static class ArtistasExtensions
                 .RecuperarPor(p => p.Email!.Equals(email))
                 ?? throw new InvalidOperationException("Não foi possível recuperar pessoa logada.");
 
-            artista.AdicionarNota(request.Nota, pessoa.Id);
+            var avaliacao = artista
+                .Avaliacoes
+                .FirstOrDefault(a => a.ArtistaId == artista.Id && a.PessoaId == pessoa.Id);
+            if (avaliacao is not null) avaliacao.Nota = request.Nota;
+            else artista.AdicionarNota(request.Nota, pessoa.Id);
+
             dalArtista.Atualizar(artista);
             return Results.Created();
+        });
+
+        groupBuilder.MapGet("{id}/avaliacao", (int id,
+            [FromServices] DAL<Artista> dalArtista,
+            [FromServices] DAL<PessoaComAcesso> dalPessoa,
+            HttpContext context) =>
+        {
+            var artista = dalArtista.RecuperarPor(a => a.Id == id);
+            if (artista is null) return Results.NotFound();
+
+            var email = context.User
+                .Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))?
+                .Value ?? throw new InvalidOperationException("Não foi possível recuperar pessoa logada.");
+
+            var pessoa = dalPessoa
+                .RecuperarPor(p => p.Email!.Equals(email))
+                ?? throw new InvalidOperationException("Não foi possível recuperar pessoa logada.");
+
+            var avaliacao = artista
+                .Avaliacoes
+                .FirstOrDefault(a => a.ArtistaId == artista.Id && a.PessoaId == pessoa.Id);
+            if (avaliacao is not null) return Results.Ok(new { ArtistaId = artista.Id, avaliacao.Nota });
+            else return Results.Ok(new { ArtistaId = artista.Id, Nota = 0 });
+
         });
         #endregion
     }
@@ -125,5 +157,5 @@ public static class ArtistasExtensions
         };
     }
 
-  
+
 }
