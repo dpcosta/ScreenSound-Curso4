@@ -28,6 +28,12 @@ public class Artista
         Musicas.Add(musica);
     }
 
+    public void AdicionarNota(double nota, int pessoaId)
+    {
+        nota = Math.Min( Math.Max(nota, 0), 5 );
+        Avaliacoes.Add(new() { ArtistaId = Id, Nota = nota, PessoaId = pessoaId });
+    }
+
     public void ExibirDiscografia()
     {
         Console.WriteLine($"Discografia do artista {Nome}");

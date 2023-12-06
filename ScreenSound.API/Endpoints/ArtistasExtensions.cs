@@ -3,6 +3,9 @@ using ScreenSound.API.Requests;
 using ScreenSound.API.Response;
 using ScreenSound.Banco;
 using ScreenSound.Modelos;
+using ScreenSound.Shared.Dados.IdentityModel;
+using System.Net;
+using System.Security.Claims;
 
 namespace ScreenSound.API.Endpoints;
 
@@ -79,6 +82,29 @@ public static class ArtistasExtensions
             artistaAAtualizar.Bio = artistaRequestEdit.bio;        
             dal.Atualizar(artistaAAtualizar);
             return Results.Ok();
+        });
+
+
+        groupBuilder.MapPost("avaliacao", (
+            [FromServices] DAL<Artista> dalArtista,
+            [FromServices] DAL<PessoaComAcesso> dalPessoa,
+            [FromBody] AvaliacaoArtistaRequest request,
+            HttpContext context) =>
+        {
+            var artista = dalArtista.RecuperarPor(a => a.Id == request.ArtistaId);
+            if (artista is null) return Results.NotFound();
+
+            var email = context.User
+                .Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))?
+                .Value ?? throw new InvalidOperationException("Não foi possível recuperar pessoa logada.");
+
+            var pessoa = dalPessoa
+                .RecuperarPor(p => p.Email!.Equals(email))
+                ?? throw new InvalidOperationException("Não foi possível recuperar pessoa logada.");
+
+            artista.AdicionarNota(request.Nota, pessoa.Id);
+            dalArtista.Atualizar(artista);
+            return Results.Created();
         });
         #endregion
     }
