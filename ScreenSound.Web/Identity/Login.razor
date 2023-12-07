@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@inject AuthAPI AuthAPI
 
 <MudPaper Class="px-8 pt-2 pb-4 mx-16 my-8" Justify="Justify.Center">
     <MudForm>
@@ -28,6 +29,6 @@
 
     private async Task FazerLogin()
     {
-        
+        await AuthAPI.LoginAsync(email, senha);
     }
 }
