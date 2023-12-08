@@ -1,10 +1,24 @@
 ﻿@page "/logout"
 @inject AuthAPI AuthAPI
 
+<MudPaper Class="px-8 py-8 mx-16 my-8" Justify="Justify.Center">
+    <AuthorizeView>
+        <Authorized>
+            <MudProgressCircular Indeterminate="true" Color="Color.Secondary" />
+        </Authorized>
+        <NotAuthorized>
+            <MudText Typo="Typo.body1" Color="Color.Secondary">Você foi desconectado.</MudText>
+            <MudButton Class="mt-4" Color="Color.Secondary" Variant="Variant.Outlined" Href="login">
+                Login
+            </MudButton>
+        </NotAuthorized>
+    </AuthorizeView>
+</MudPaper>
+
 @code {
     protected async override Task OnInitializedAsync()
     {
-        await AuthAPI.LogoutAsync();
+        if (await AuthAPI.VerificaAutenticado()) await AuthAPI.LogoutAsync();
         await base.OnInitializedAsync();
     }
 }
