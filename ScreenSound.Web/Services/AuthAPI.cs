@@ -25,7 +25,7 @@ public class AuthAPI(IHttpClientFactory factory) : AuthenticationStateProvider
                 // incluir outros dados necessários para seu negócio
             ];
 
-            var identity = new ClaimsIdentity(dadosDaPessoa);
+            var identity = new ClaimsIdentity(dadosDaPessoa, "Cookies");
             pessoa = new ClaimsPrincipal(identity);
 
         }
