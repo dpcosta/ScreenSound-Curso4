@@ -21,6 +21,7 @@ public class AuthAPI(IHttpClientFactory factory) : AuthenticationStateProvider
 
             Claim[] dadosDaPessoa =
             [
+                new Claim(ClaimTypes.Name, info.Email!),
                 new Claim(ClaimTypes.Email, info.Email!)
                 // incluir outros dados necessários para seu negócio
             ];
@@ -43,6 +44,7 @@ public class AuthAPI(IHttpClientFactory factory) : AuthenticationStateProvider
 
         if (response.IsSuccessStatusCode)
         {
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
             return new AuthResponse { Sucesso = true };
         }
 
