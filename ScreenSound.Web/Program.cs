@@ -11,16 +11,16 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddMudServices();
 
-builder.Services.AddTransient<CookieHandler>();
+builder.Services.AddScoped<CookieHandler>();
 builder.Services.AddAuthorizationCore();
-builder.Services.AddTransient<AuthenticationStateProvider, AuthAPI>();
-builder.Services.AddTransient<AuthAPI>(sp => (AuthAPI)sp.GetRequiredService<AuthenticationStateProvider>());
+builder.Services.AddScoped<AuthenticationStateProvider, AuthAPI>();
+builder.Services.AddScoped<AuthAPI>(sp => (AuthAPI)sp.GetRequiredService<AuthenticationStateProvider>());
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-builder.Services.AddTransient<ArtistaAPI>();
-builder.Services.AddTransient<MusicaAPI>();
+builder.Services.AddScoped<ArtistaAPI>();
+builder.Services.AddScoped<MusicaAPI>();
 
 
 builder.Services.AddHttpClient("API",client => {

@@ -2,12 +2,12 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthAPI AuthAPI
 
-<AuthorizeView>
-    <Authorized>
-        <p>Você está autenticado como @context.User.Identity!.Name </p>
-    </Authorized>
-    <NotAuthorized>
-        <MudPaper Class="px-8 pt-2 pb-4 mx-16 my-8" Justify="Justify.Center">
+<MudPaper Class="px-8 pt-2 pb-4 mx-16 my-8" Justify="Justify.Center">
+    <AuthorizeView>
+        <Authorized>
+            <p>Você está autenticado como @context.User.Identity!.Name </p>
+        </Authorized>
+        <NotAuthorized>
             <MudForm>
 
                 <MudTextField T="string" Label="Email" @bind-Value="email"
@@ -27,9 +27,9 @@
                 </MudButton>
 
             </MudForm>
-        </MudPaper>
-    </NotAuthorized>
-</AuthorizeView>
+        </NotAuthorized>
+    </AuthorizeView>
+</MudPaper>
 
 
 @code {

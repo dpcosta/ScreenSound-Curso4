@@ -50,4 +50,10 @@ public class AuthAPI(IHttpClientFactory factory) : AuthenticationStateProvider
 
         return new AuthResponse { Erros = ["Login/senha inválidos!"] };
     }
+
+    public async Task LogoutAsync()
+    {
+        await _httpClient.PostAsync("auth/logout", null);
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+    }
 }
