@@ -145,7 +145,7 @@ public static class ArtistasExtensions
     {
         return new ArtistaResponse(artista.Id, artista.Nome, artista.Bio, artista.FotoPerfil)
         {
-            Classicacao = artista.Avaliacoes
+            Classificacao = artista.Avaliacoes
                 .Select(a => a.Nota)
                 .DefaultIfEmpty(0)
                 .Average()

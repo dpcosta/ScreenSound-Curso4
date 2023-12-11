@@ -2,5 +2,5 @@
 
 public record ArtistaResponse(int Id, string Nome, string Bio, string? FotoPerfil)
 {
-    public  double? Classicacao { get; set; }
+    public  double? Classificacao { get; set; }
 };
