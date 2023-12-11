@@ -304,7 +304,7 @@ namespace ScreenSound.Migrations
 
                     b.HasKey("ArtistaId", "PessoaId");
 
-                    b.ToTable("AvaliacoesArtista");
+                    b.ToTable("AvaliacaoArtistas");
                 });
 
             modelBuilder.Entity("ScreenSound.Shared.Modelos.Modelos.Genero", b =>

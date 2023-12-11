@@ -12,8 +12,8 @@ using ScreenSound.Banco;
 namespace ScreenSound.Migrations
 {
     [DbContext(typeof(ScreenSoundContext))]
-    [Migration("20231211125057_AvaliacoesArtista")]
-    partial class AvaliacoesArtista
+    [Migration("20231211125536_AvaliacaoArtistas")]
+    partial class AvaliacaoArtistas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -307,7 +307,7 @@ namespace ScreenSound.Migrations
 
                     b.HasKey("ArtistaId", "PessoaId");
 
-                    b.ToTable("AvaliacoesArtista");
+                    b.ToTable("AvaliacaoArtistas");
                 });
 
             modelBuilder.Entity("ScreenSound.Shared.Modelos.Modelos.Genero", b =>

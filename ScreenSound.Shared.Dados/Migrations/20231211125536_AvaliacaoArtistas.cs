@@ -5,13 +5,13 @@
 namespace ScreenSound.Migrations
 {
     /// <inheritdoc />
-    public partial class AvaliacoesArtista : Migration
+    public partial class AvaliacaoArtistas : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AvaliacoesArtista",
+                name: "AvaliacaoArtistas",
                 columns: table => new
                 {
                     ArtistaId = table.Column<int>(type: "int", nullable: false),
@@ -20,9 +20,9 @@ namespace ScreenSound.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AvaliacoesArtista", x => new { x.ArtistaId, x.PessoaId });
+                    table.PrimaryKey("PK_AvaliacaoArtistas", x => new { x.ArtistaId, x.PessoaId });
                     table.ForeignKey(
-                        name: "FK_AvaliacoesArtista_Artistas_ArtistaId",
+                        name: "FK_AvaliacaoArtistas_Artistas_ArtistaId",
                         column: x => x.ArtistaId,
                         principalTable: "Artistas",
                         principalColumn: "Id",
@@ -34,7 +34,7 @@ namespace ScreenSound.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AvaliacoesArtista");
+                name: "AvaliacaoArtistas");
         }
     }
 }
