@@ -29,6 +29,7 @@ public class Artista
 
     public void AdicionarNota(int pessoaId, int nota)
     {
+        nota = Math.Min(Math.Max(nota, 1), 5); // garantir que nota está entre 1 e 5
         Avaliacoes.Add(new AvaliacaoArtista() { ArtistaId = this.Id, Nota = nota, PessoaId = pessoaId });
     }
 
