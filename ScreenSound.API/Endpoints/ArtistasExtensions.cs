@@ -3,6 +3,8 @@ using ScreenSound.API.Requests;
 using ScreenSound.API.Response;
 using ScreenSound.Banco;
 using ScreenSound.Modelos;
+using ScreenSound.Shared.Dados.Modelos;
+using System.Security.Claims;
 
 namespace ScreenSound.API.Endpoints;
 
@@ -76,6 +78,35 @@ public static class ArtistasExtensions
             dal.Atualizar(artistaAAtualizar);
             return Results.Ok();
         });
+
+        groupBuilder.MapPost("avaliacao", (
+            HttpContext context,
+            [FromServices] DAL<Artista> dalArtista,
+            [FromServices] DAL<PessoaComAcesso> dalPessoa,
+            [FromBody] AvaliacaoArtistaRequest request
+            ) => 
+        { 
+            var artista = dalArtista.RecuperarPor(a => a.Id == request.ArtistaId); 
+            if (artista is null) Results.NotFound();
+
+            var email = context.User.Claims
+                .FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email))?.Value
+                ?? throw new InvalidOperationException("Não foi encontrado o email da pessoa logada");
+
+            var pessoa = dalPessoa.RecuperarPor(p => p.Email!.Equals(email))
+                ?? throw new InvalidOperationException("Não foi encontrado o email da pessoa logada");
+
+            var avaliacao = artista
+                .Avaliacoes
+                .FirstOrDefault(a => a.ArtistaId == request.ArtistaId && a.PessoaId == pessoa.Id);
+            if (avaliacao is not null) avaliacao.Nota = request.Nota;
+            else artista.AdicionarNota(pessoa.Id, request.Nota);
+            
+            dalArtista.Atualizar(artista);
+            return Results.Created();
+
+        });
+
         #endregion
     }
 
@@ -86,7 +117,13 @@ public static class ArtistasExtensions
 
     private static ArtistaResponse EntityToResponse(Artista artista)
     {
-        return new ArtistaResponse(artista.Id, artista.Nome, artista.Bio, artista.FotoPerfil);
+        return new ArtistaResponse(artista.Id, artista.Nome, artista.Bio, artista.FotoPerfil)
+        {
+            Classicacao = artista.Avaliacoes
+                .Select(a => a.Nota)
+                .DefaultIfEmpty(0)
+                .Average()
+        };
     }
 
   
