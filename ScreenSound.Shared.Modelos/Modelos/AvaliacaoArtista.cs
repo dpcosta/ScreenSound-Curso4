@@ -1,6 +1,4 @@
-﻿using ScreenSound.Modelos;
-
-namespace ScreenSound.Shared.Modelos.Modelos;
+﻿namespace ScreenSound.Modelos;
 
 public class AvaliacaoArtista
 {
